@@ -12,9 +12,12 @@ export const useAuth = () => {
 
     const handleLogin = async ({ email, password }) => {
         setLoading(true)
-        try {
+        try { 
+            console.log("tring login")
             const data = await login({ email, password })
             setUser(data.user)
+            console.log("tring login")
+              console.log("data is", data)
         } catch (err) {
 
         } finally {

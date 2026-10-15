@@ -10,49 +10,78 @@ const tokenBlacklistModel = require("../models/blacklist.model")
  */
 async function registerUserController(req, res) {
 
-    const { username, email, password } = req.body
+    try {
+        console.log("📝 Register Step 1: Request received", req.body)
 
-    if (!username || !email || !password) {
-        return res.status(400).json({
-            message: "Please provide username, email and password"
-        })
-    }
+        const { username, email, password } = req.body
 
-    const isUserAlreadyExists = await userModel.findOne({
-        $or: [ { username }, { email } ]
-    })
+        console.log("📝 Register Step 2: Extracted fields", { username, email, passwordLength: password?.length })
 
-    if (isUserAlreadyExists) {
-        return res.status(400).json({
-            message: "Account already exists with this email address or username"
-        })
-    }
-
-    const hash = await bcrypt.hash(password, 10)
-
-    const user = await userModel.create({
-        username,
-        email,
-        password: hash
-    })
-
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-    )
-
-    res.cookie("token", token)
-
-
-    res.status(201).json({
-        message: "User registered successfully",
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email
+        if (!username || !email || !password) {
+            console.log("❌ Register Step 3: Missing fields")
+            return res.status(400).json({
+                message: "Please provide username, email and password"
+            })
         }
-    })
+
+        console.log("✅ Register Step 3: All fields present")
+
+        const isUserAlreadyExists = await userModel.findOne({
+            $or: [ { username }, { email } ]
+        })
+
+        console.log("📝 Register Step 4: User check", { exists: !!isUserAlreadyExists })
+
+        if (isUserAlreadyExists) {
+            console.log("❌ Register Step 5: User already exists")
+            return res.status(400).json({
+                message: "Account already exists with this email address or username"
+            })
+        }
+
+        console.log("✅ Register Step 5: User doesn't exist, proceeding")
+
+        const hash = await bcrypt.hash(password, 10)
+        console.log("✅ Register Step 6: Password hashed")
+
+        const user = await userModel.create({
+            username,
+            email,
+            password: hash
+        })
+
+        console.log("✅ Register Step 7: User created in DB", { userId: user._id })
+
+        const token = jwt.sign(
+            { id: user._id, username: user.username },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+        )
+
+        console.log("✅ Register Step 8: JWT token created")
+
+        res.cookie("token", token)
+        console.log("✅ Register Step 9: Cookie set")
+
+        res.status(201).json({
+            message: "User registered successfully",
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        })
+
+        console.log("✅ Register Step 10: Response sent - SUCCESS")
+
+    } catch (error) {
+        console.error("❌ Register Error:", error.message)
+        console.error("Stack:", error.stack)
+        res.status(500).json({
+            message: "Registration failed",
+            error: error.message
+        })
+    }
 
 }
 
@@ -64,39 +93,69 @@ async function registerUserController(req, res) {
  */
 async function loginUserController(req, res) {
 
-    const { email, password } = req.body
+    try {
+        console.log("🔐 Login Step 1: Request received", { email: req.body.email })
 
-    const user = await userModel.findOne({ email })
+        const { email, password } = req.body
 
-    if (!user) {
-        return res.status(400).json({
-            message: "Invalid email or password"
-        })
-    }
+        console.log("🔐 Login Step 2: Extracted fields", { email, passwordLength: password?.length })
 
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+        const user = await userModel.findOne({ email })
 
-    if (!isPasswordValid) {
-        return res.status(400).json({
-            message: "Invalid email or password"
-        })
-    }
+        console.log("🔐 Login Step 3: User lookup", { found: !!user })
 
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-    )
-
-    res.cookie("token", token)
-    res.status(200).json({
-        message: "User loggedIn successfully.",
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email
+        if (!user) {
+            console.log("❌ Login Step 4: User not found")
+            return res.status(400).json({
+                message: "Invalid email or password"
+            })
         }
-    })
+
+        console.log("✅ Login Step 4: User found")
+
+        const isPasswordValid = await bcrypt.compare(password, user.password)
+
+        console.log("🔐 Login Step 5: Password check", { valid: isPasswordValid })
+
+        if (!isPasswordValid) {
+            console.log("❌ Login Step 6: Password invalid")
+            return res.status(400).json({
+                message: "Invalid email or password"
+            })
+        }
+
+        console.log("✅ Login Step 6: Password valid")
+
+        const token = jwt.sign(
+            { id: user._id, username: user.username },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+        )
+
+        console.log("✅ Login Step 7: JWT token created")
+
+        res.cookie("token", token)
+        console.log("✅ Login Step 8: Cookie set")
+
+        res.status(200).json({
+            message: "User loggedIn successfully.",
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        })
+
+        console.log("✅ Login Step 9: Response sent - SUCCESS")
+
+    } catch (error) {
+        console.error("❌ Login Error:", error.message)
+        console.error("Stack:", error.stack)
+        res.status(500).json({
+            message: "Login failed",
+            error: error.message
+        })
+    }
 }
 
 
