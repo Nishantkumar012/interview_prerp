@@ -12,14 +12,17 @@ export const useAuth = () => {
 
     const handleLogin = async ({ email, password }) => {
         setLoading(true)
-        try { 
+        try {
             console.log("tring login")
             const data = await login({ email, password })
             setUser(data.user)
+            localStorage.setItem("user", JSON.stringify(data.user))
             console.log("tring login")
               console.log("data is", data)
         } catch (err) {
-
+            console.error("❌ Login Error:", err.message)
+            setUser(null)
+            localStorage.removeItem("user")
         } finally {
             setLoading(false)
         }
@@ -31,13 +34,16 @@ export const useAuth = () => {
         try {
             const data = await register({ username, email, password })
         console.log("reg2")
-            
+
             setUser(data.user)
+            localStorage.setItem("user", JSON.stringify(data.user))
         console.log("reg3")
-        
+
         } catch (err) {
-        console.log("reg4")
-              
+        console.error("❌ Register Error:", err.message)
+        setUser(null)
+        localStorage.removeItem("user")
+
         } finally {
         console.log("reg5")
 
@@ -50,8 +56,11 @@ export const useAuth = () => {
         try {
             const data = await logout()
             setUser(null)
+            localStorage.removeItem("user")
         } catch (err) {
-
+            console.error("❌ Logout Error:", err.message)
+            setUser(null)
+            localStorage.removeItem("user")
         } finally {
             setLoading(false)
         }
@@ -61,10 +70,17 @@ export const useAuth = () => {
 
         const getAndSetUser = async () => {
             try {
+                const storedUser = localStorage.getItem("user")
+                if (storedUser) {
+                    setUser(JSON.parse(storedUser))
+                }
 
                 const data = await getMe()
                 setUser(data.user)
-            } catch (err) { } finally {
+                localStorage.setItem("user", JSON.stringify(data.user))
+            } catch (err) {
+                localStorage.removeItem("user")
+            } finally {
                 setLoading(false)
             }
         }
