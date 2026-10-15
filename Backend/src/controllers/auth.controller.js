@@ -159,6 +159,8 @@ async function loginUserController(req, res) {
 }
 
 
+
+
 /**
  * @name logoutUserController
  * @description clear token from user cookie and add the token in blacklist
