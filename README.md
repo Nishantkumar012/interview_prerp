@@ -20,7 +20,7 @@ Resume AI leverages Google's Gemini AI to provide candidates with:
 - Match Score - Percentage-based job compatibility analysis
 - Interview Report - Comprehensive preparation guide
 - Resume History - Track and revisit previous reports
-- Resume Download - Export optimized resume as PDF
+- Resume Download - Export optimized resume as PDF *(Coming Soon)*
 
 ### Technical Features
 - Real-time Processing - Fast AI-powered analysis (~30s)
@@ -216,11 +216,12 @@ Choose one of two options:
 - Practice exercises
 - Mock interview prep
 
-#### Step 6: Download Resume
+#### Step 6: Download Resume (Coming Soon)
 - AI generates optimized resume
 - Tailored for job description
 - ATS-friendly format
 - Ready to submit
+- *Note: This feature is coming soon*
 
 ### Interview Preparation Tips
 
