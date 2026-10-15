@@ -54,12 +54,21 @@ export async function logout() {
 export async function getMe() {
 
     try {
-
+        
+        console.log(" aaya 1")
         const response = await api.get("/api/auth/get-me")
+         
+        console.log(" aaya 2")
+        console.log("response is", response);
+        console.log("data is", response.data);
 
         return response.data
+        console.log(" aaya 3")
+
 
     } catch (err) {
+        console.log("error aaya ")
+
         console.log(err)
     }
 

@@ -60,7 +60,12 @@ async function registerUserController(req, res) {
 
         console.log("✅ Register Step 8: JWT token created")
 
-        res.cookie("token", token)
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 24 * 60 * 60 * 1000
+        })
         console.log("✅ Register Step 9: Cookie set")
 
         res.status(201).json({
@@ -134,7 +139,12 @@ async function loginUserController(req, res) {
 
         console.log("✅ Login Step 7: JWT token created")
 
-        res.cookie("token", token)
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 24 * 60 * 60 * 1000
+        })
         console.log("✅ Login Step 8: Cookie set")
 
         res.status(200).json({
