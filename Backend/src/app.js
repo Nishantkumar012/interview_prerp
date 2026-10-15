@@ -4,10 +4,14 @@ const cors = require("cors")
 
 const app = express()
 
+const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS || "http://localhost:5173")
+    .split(",")
+    .map(origin => origin.trim())
+
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin:  process.env.CORS_ORIGINS || "http://localhost:5173",
+    origin: ALLOWED_ORIGINS,
     credentials: true
 }))
 
